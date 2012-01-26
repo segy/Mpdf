@@ -10,6 +10,7 @@ class MpdfComponent extends Component {
 	 * @var object
 	 */
 	public $pdf;
+	
 	/**
 	 * Default values for mPDF constructor
 	 * @var array
@@ -31,16 +32,19 @@ class MpdfComponent extends Component {
 		'margin_header' => 9,
 		'margin_footer' => 9
 	);
+	
 	/**
 	 * Flag set to true if mPDF was initialized
 	 * @var bool
 	 */
 	protected $_init = false;
+	
 	/**
 	 * Name of the file on the output
 	 * @var string
 	 */
 	protected $_filename = NULL;
+	
 	/**
 	 * Destination - posible values are I, D, F, S
 	 * @var string
