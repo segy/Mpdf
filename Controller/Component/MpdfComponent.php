@@ -9,7 +9,7 @@ class MpdfComponent extends Component {
 	 * Instance of mPDF class
 	 * @var object
 	 */
-	public $pdf;
+	protected $_pdf;
 	
 	/**
 	 * Default values for mPDF constructor
@@ -67,7 +67,7 @@ class MpdfComponent extends Component {
 		foreach ($this->_configuration as $key => $val)
 			$c[$key] = array_key_exists($key, $configuration) ? $configuration[$key] : $val;
 		// initialize
-		$this->pdf = new mPDF($c['mode'], $c['format'], $c['font_size'], $c['font'], $c['margin_left'], $c['margin_right'], $c['margin_top'], $c['margin_bottom'], $c['margin_header'], $c['margin_footer']);
+		$this->_pdf = new mPDF($c['mode'], $c['format'], $c['font_size'], $c['font'], $c['margin_left'], $c['margin_right'], $c['margin_top'], $c['margin_bottom'], $c['margin_header'], $c['margin_footer']);
 		$this->_init = true;
 	}
 	
@@ -92,9 +92,28 @@ class MpdfComponent extends Component {
 	 */
 	public function shutdown($controller) {
 		if ($this->_init) {
-			$this->pdf->WriteHTML((string)$controller->response);
-			$this->pdf->Output($this->_filename, $this->_output);
+			$this->_pdf->WriteHTML((string)$controller->response);
+			$this->_pdf->Output($this->_filename, $this->_output);
 			exit;
 		}
 	}
+	
+	/** 
+     * Pass setting properties directly to mPDF 
+     */ 
+    public function __set($name, $value) { 
+	    if ($this->_init) {
+	        $this->_pdf->$name = $value;
+	    } 
+    } 
+	
+	/** 
+     * Pass the called methods directly to mPDF 
+     */ 
+    public function __call($method, $args) { 
+	    if ($this->_init && method_exists($this->_pdf, $method)) {
+	        return call_user_func_array(array($this->_pdf, $method), $args);
+	    } 
+	    return null;
+    } 
 }
