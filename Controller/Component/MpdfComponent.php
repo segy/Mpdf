@@ -9,8 +9,7 @@ class MpdfComponent extends Component {
 	 * Instance of mPDF class
 	 * @var object
 	 */
-	protected $_pdf;
-	
+	protected $pdf;
 	/**
 	 * Default values for mPDF constructor
 	 * @var array
@@ -32,19 +31,16 @@ class MpdfComponent extends Component {
 		'margin_header' => 9,
 		'margin_footer' => 9
 	);
-	
 	/**
 	 * Flag set to true if mPDF was initialized
 	 * @var bool
 	 */
 	protected $_init = false;
-	
 	/**
 	 * Name of the file on the output
 	 * @var string
 	 */
 	protected $_filename = NULL;
-	
 	/**
 	 * Destination - posible values are I, D, F, S
 	 * @var string
@@ -67,7 +63,7 @@ class MpdfComponent extends Component {
 		foreach ($this->_configuration as $key => $val)
 			$c[$key] = array_key_exists($key, $configuration) ? $configuration[$key] : $val;
 		// initialize
-		$this->_pdf = new mPDF($c['mode'], $c['format'], $c['font_size'], $c['font'], $c['margin_left'], $c['margin_right'], $c['margin_top'], $c['margin_bottom'], $c['margin_header'], $c['margin_footer']);
+		$this->pdf = new mPDF($c['mode'], $c['format'], $c['font_size'], $c['font'], $c['margin_left'], $c['margin_right'], $c['margin_top'], $c['margin_bottom'], $c['margin_header'], $c['margin_footer']);
 		$this->_init = true;
 	}
 	
@@ -92,28 +88,32 @@ class MpdfComponent extends Component {
 	 */
 	public function shutdown($controller) {
 		if ($this->_init) {
-			$this->_pdf->WriteHTML((string)$controller->response);
-			$this->_pdf->Output($this->_filename, $this->_output);
+			$this->pdf->WriteHTML((string)$controller->response);
+			$this->pdf->Output($this->_filename, $this->_output);
 			exit;
 		}
 	}
 	
-	/** 
-     * Pass setting properties directly to mPDF 
-     */ 
-    public function __set($name, $value) { 
-	    if ($this->_init) {
-	        $this->_pdf->$name = $value;
-	    } 
-    } 
+	/**
+	 * Passing mathod cals and variable setting to mPDF library.
+	 */
+	public function __set($name, $value) {
+		$this->pdf->$name = $value;
+	}
+
+	public function __get($name) {
+		return $this->pdf->$name;
+	}
+
+	public function __isset($name) {
+		return isset($this->pdf->$name);
+	}
+
+	public function __unset($name) {
+		unset($this->pdf->$name);
+	}
 	
-	/** 
-     * Pass the called methods directly to mPDF 
-     */ 
-    public function __call($method, $args) { 
-	    if ($this->_init && method_exists($this->_pdf, $method)) {
-	        return call_user_func_array(array($this->_pdf, $method), $args);
-	    } 
-	    return null;
-    } 
+	public function __call($name, $arguments) {
+		call_user_func_array(array($this->pdf, $name), $arguments);
+	}
 }
