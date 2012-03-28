@@ -95,7 +95,7 @@ class MpdfComponent extends Component {
 	}
 	
 	/**
-	 * Passing mathod cals and variable setting to mPDF library.
+	 * Passing method calls and variable setting to mPDF library.
 	 */
 	public function __set($name, $value) {
 		$this->pdf->$name = $value;
