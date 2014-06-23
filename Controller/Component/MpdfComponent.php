@@ -86,7 +86,7 @@ class MpdfComponent extends Component {
 	 * Shutdown of the component
 	 * View is rendered but not yet sent to browser.
 	 */
-	public function shutdown($controller) {
+	public function shutdown(Controller $controller) {
 		if ($this->_init) {
 			$this->pdf->WriteHTML((string)$controller->response);
 			$this->pdf->Output($this->_filename, $this->_output);
